@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Mon Sommaire</title>
+  <title>Mon Portfolio</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -20,17 +20,31 @@
         </ul>
       </li>
       <li><a href="#">À propos</a></li>
-      <li><a href="login.html">Connexion</a></li>
+      <li><a href="#" id="logout">Déconnexion</a></li>
     </ul>
   </nav>
 
   <main>
     <h1>Bienvenue sur mon Portfolio</h1>
-    <p>Voici une page avec un sommaire simple et un menu déroulant élégant.</p>
+    <p>Cette page est protégée : tu t'es bien connecté !</p>
   </main>
+
+  <script>
+    // 🚫 Bloque l’accès direct à la page
+    if (sessionStorage.getItem("loggedIn") !== "true") {
+      window.location.href = "login.html";
+    }
+
+    // 🔓 Déconnexion
+    document.getElementById("logout").addEventListener("click", function() {
+      sessionStorage.removeItem("loggedIn");
+      window.location.href = "login.html";
+    });
+  </script>
 
 </body>
 </html>
+
 
 
 
