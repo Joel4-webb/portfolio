@@ -2,13 +2,13 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Mon Portfolio</title>
-  <link rel="stylesheet" href="styles.css">
+  <title>Mon Portfolio — Devoirs</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
   <nav class="navbar">
-    <div class="logo">Mon Sommaire</div>
+    <div class="logo">Mon Portfolio</div>
     <ul class="nav-links">
       <li><a href="#">Accueil</a></li>
       <li class="dropdown">
@@ -16,34 +16,95 @@
         <ul class="dropdown-menu">
           <li><a href="#">Chapitre 1</a></li>
           <li><a href="#">Chapitre 2</a></li>
-          <li><a href="#">Chapitre 3</a></li>
         </ul>
       </li>
-      <li><a href="#">À propos</a></li>
       <li><a href="#" id="logout">Déconnexion</a></li>
     </ul>
   </nav>
 
   <main>
-    <h1>Bienvenue sur mon Portfolio</h1>
-    <p>Cette page est protégée : tu t'es bien connecté !</p>
+    <h1>Mes Devoirs</h1>
+
+    <section id="ajout-devoir">
+      <h2>Ajouter un devoir</h2>
+      <form id="devoirForm">
+        <input type="text" id="titre" placeholder="Titre du devoir" required>
+        <textarea id="description" placeholder="Description" rows="4" required></textarea>
+        <button type="submit">Ajouter</button>
+      </form>
+    </section>
+
+    <section id="liste-devoirs">
+      <h2>Liste des devoirs</h2>
+      <ul id="devoirs"></ul>
+    </section>
   </main>
 
   <script>
-    // 🚫 Bloque l’accès direct à la page
+    // 🚫 Vérifie la connexion
     if (sessionStorage.getItem("loggedIn") !== "true") {
       window.location.href = "login.html";
     }
 
     // 🔓 Déconnexion
-    document.getElementById("logout").addEventListener("click", function() {
+    document.getElementById("logout").addEventListener("click", () => {
       sessionStorage.removeItem("loggedIn");
       window.location.href = "login.html";
     });
+
+    // 📚 Gestion des devoirs (stockés localement)
+    const form = document.getElementById("devoirForm");
+    const liste = document.getElementById("devoirs");
+
+    // Charger les devoirs existants
+    let devoirs = JSON.parse(localStorage.getItem("devoirs")) || [];
+
+    // Afficher les devoirs
+    function afficherDevoirs() {
+      liste.innerHTML = "";
+      if (devoirs.length === 0) {
+        liste.innerHTML = "<p>Aucun devoir pour le moment.</p>";
+        return;
+      }
+      devoirs.forEach((d, index) => {
+        const li = document.createElement("li");
+        li.innerHTML = `<strong>${d.titre}</strong><br>${d.description}<br>
+                        <button onclick="supprimerDevoir(${index})">Supprimer</button>`;
+        liste.appendChild(li);
+      });
+    }
+
+    // Ajouter un devoir
+    form.addEventListener("submit", function(e) {
+      e.preventDefault();
+      const titre = document.getElementById("titre").value.trim();
+      const description = document.getElementById("description").value.trim();
+
+      if (titre && description) {
+        devoirs.push({ titre, description });
+        localStorage.setItem("devoirs", JSON.stringify(devoirs));
+        form.reset();
+        afficherDevoirs();
+      }
+    });
+
+    // Supprimer un devoir
+    function supprimerDevoir(index) {
+      devoirs.splice(index, 1);
+      localStorage.setItem("devoirs", JSON.stringify(devoirs));
+      afficherDevoirs();
+    }
+
+    // Rendre la fonction accessible
+    window.supprimerDevoir = supprimerDevoir;
+
+    // Initialisation
+    afficherDevoirs();
   </script>
 
 </body>
 </html>
+
 
 
 
